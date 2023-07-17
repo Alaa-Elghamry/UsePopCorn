@@ -54,7 +54,8 @@ body {
   max-width: 42rem;
   background-color: var(--color-background-500);
   border-radius: 0.9rem;
-  /* overflow: scroll; */
+  overflow: auto;
+  scroll-behavior: smooth;
   position: relative;
 }
 
@@ -138,7 +139,9 @@ body {
 .list {
   list-style: none;
   padding: 0.8rem 0;
-  /* overflow: scroll; */
+  overflow: auto;
+  scroll-behavior: smooth;
+
 }
 
 .list-watched {

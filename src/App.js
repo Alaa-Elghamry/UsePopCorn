@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
 import StarRating from "./StarRating";
+import { useKey } from "./useKey";
+
+
+
+
+
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -80,12 +86,16 @@ export default function App() {
 
   useEffect(
     function () {
+
+      const controller = new AbortController();
+
       async function getMovieDetails() {
         try {
           setIsLoading(true);
           setError("");
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            {signal: controller.signal}
           );
 
           if (!res.ok) {
@@ -96,8 +106,13 @@ export default function App() {
             throw new Error("Movie Not Found!");
           }
           setMovies(data.Search);
+          setError("");
+
         } catch (err) {
-          setError(err.message);
+          if (err.name !== "AbortError") {
+            
+            setError(err.message);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -107,7 +122,14 @@ export default function App() {
         setError("");
         return;
       }
+      handleCloseMovie();
       getMovieDetails();
+
+    return function () {
+      controller.abort();
+    }
+
+
     },
     [query]
   );
@@ -348,6 +370,7 @@ function MovieDetails({ SlectedId, onCloseMovie, onAddWatched, watched }) {
     onCloseMovie();
   }
  
+  useKey("Escape", onCloseMovie);
 
   useEffect(function () {
     if (!title) return;

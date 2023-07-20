@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
 import { useKey } from "./useKey";
+import { useMovies } from "./useMovies";
+import { useLocalStorageState } from "./useLocalStorageState";
 
 
 const average = (arr) =>
@@ -9,15 +11,15 @@ const average = (arr) =>
 const KEY = "47455a74";
 
 export default function App() {
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [query, setQuery] = useState("Inception");
   const [SlectedId, setSlectedId] = useState(null);
-  const [watched, setWatched] = useState(() => {
-    const storedValue = localStorage.getItem('watched');
-    return JSON.parse(storedValue);
-  });
+
+  const { movies, isLoading, error } = useMovies(query);
+
+
+
+  const [watched, setWatched] = useLocalStorageState([],"watched");
+
 
   function handleSelectedMovie(id) {
     setSlectedId((SlectedId) => (id === SlectedId ? null : id));
@@ -36,60 +38,8 @@ export default function App() {
 
   }
 
-useEffect(function () {
-  localStorage.setItem("watched",JSON.stringify(watched))
-},[watched])
 
-  useEffect(
-    function () {
-
-      const controller = new AbortController();
-
-      async function getMovieDetails() {
-        try {
-          setIsLoading(true);
-          setError("");
-          const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-            {signal: controller.signal}
-          );
-
-          if (!res.ok) {
-            throw new Error("Something Went Wrong With Fetching Movies!");
-          }
-          const data = await res.json();
-          if (data.Response === "False") {
-            throw new Error("Movie Not Found!");
-          }
-          setMovies(data.Search);
-          setError("");
-
-        } catch (err) {
-          if (err.name !== "AbortError") {
-            
-            setError(err.message);
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      if (!query.length) {
-        setMovies([]);
-        setError("");
-        return;
-      }
-      handleCloseMovie();
-      getMovieDetails();
-
-      //// CleanUp Function ////////
-    return function () {
-      controller.abort();
-    }
-
-
-    },
-    [query]
-  );
+ 
 
   return (
     <>

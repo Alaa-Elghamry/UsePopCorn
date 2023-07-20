@@ -4,7 +4,6 @@ import { useKey } from "./useKey";
 import { useMovies } from "./useMovies";
 import { useLocalStorageState } from "./useLocalStorageState";
 
-
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
@@ -16,10 +15,7 @@ export default function App() {
 
   const { movies, isLoading, error } = useMovies(query);
 
-
-
-  const [watched, setWatched] = useLocalStorageState([],"watched");
-
+  const [watched, setWatched] = useLocalStorageState([], "watched");
 
   function handleSelectedMovie(id) {
     setSlectedId((SlectedId) => (id === SlectedId ? null : id));
@@ -30,16 +26,11 @@ export default function App() {
   }
 
   function handleDeleteWatched(id) {
-    setWatched((watched) => watched.filter((movie)=> movie.imdbID !== id ));
-    
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
   function handleAddWatched(movie) {
     setWatched((watched) => [...watched, movie]);
-
   }
-
-
- 
 
   return (
     <>
@@ -69,8 +60,11 @@ export default function App() {
           ) : (
             <>
               <Summary watched={watched} />
-            
-              <WatchedMoviesList watched={watched}   onDeleteWatched={handleDeleteWatched}  />
+
+              <WatchedMoviesList
+                watched={watched}
+                onDeleteWatched={handleDeleteWatched}
+              />
             </>
           )}
         </Box>
@@ -105,11 +99,10 @@ function Logo() {
 }
 
 function Search({ query, setQuery }) {
-  const inpueEl = useRef(null)
- useEffect(function() {
-  inpueEl.current.focus();
- },[])
-
+  const inpueEl = useRef(null);
+  useEffect(function () {
+    inpueEl.current.focus();
+  }, []);
 
   return (
     <input
@@ -181,20 +174,21 @@ function Summary({ watched }) {
   );
 }
 
-function WatchedMoviesList({ watched,onDeleteWatched }) {
+function WatchedMoviesList({ watched, onDeleteWatched }) {
   return (
     <ul className="list">
       {watched.map((movie) => (
-        <WatchedMovie 
-        movie={movie} 
-        key={movie.imdbID} 
-        onDeleteWatched={onDeleteWatched} />
+        <WatchedMovie
+          movie={movie}
+          key={movie.imdbID}
+          onDeleteWatched={onDeleteWatched}
+        />
       ))}
     </ul>
   );
 }
 
-function WatchedMovie({ movie,onDeleteWatched }) {
+function WatchedMovie({ movie, onDeleteWatched }) {
   return (
     <li>
       <img src={movie.poster} alt={`${movie.title} poster`} />
@@ -213,7 +207,10 @@ function WatchedMovie({ movie,onDeleteWatched }) {
           <span>{movie.runtime} min</span>
         </p>
 
-        <button className="btn-delete" onClick={()=> onDeleteWatched(movie.imdbID)}></button>
+        <button
+          className="btn-delete"
+          onClick={() => onDeleteWatched(movie.imdbID)}
+        ></button>
       </div>
     </li>
   );
@@ -253,7 +250,9 @@ function MovieDetails({ SlectedId, onCloseMovie, onAddWatched, watched }) {
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
   const isWatched = watched.map((movie) => movie.imdbID).includes(SlectedId);
-  const watchedUserRating = watched.find(movie=> movie.imdbID ===SlectedId)?.userRating
+  const watchedUserRating = watched.find(
+    (movie) => movie.imdbID === SlectedId
+  )?.userRating;
   const {
     Title: title,
     Year: year,
@@ -283,25 +282,21 @@ function MovieDetails({ SlectedId, onCloseMovie, onAddWatched, watched }) {
 
     onCloseMovie();
   }
- 
 
-
-
-
-
-   
   useKey("Escape", onCloseMovie);
 
-  useEffect(function () {
-    if (!title) return;
-    document.title= `Movie | ${title}`
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `Movie | ${title}`;
 
-    return function () {
-    document.title= `UsePopCorn`  
-    }
-  },[title])
+      return function () {
+        document.title = `UsePopCorn`;
+      };
+    },
+    [title]
+  );
 
-  
   useEffect(
     function name() {
       async function getMovieDetails() {
@@ -359,7 +354,10 @@ function MovieDetails({ SlectedId, onCloseMovie, onAddWatched, watched }) {
                   )}
                 </>
               ) : (
-                <p>You Already Rated This Movie: {watchedUserRating}<span>⭐️</span>  </p>
+                <p>
+                  You Already Rated This Movie: {watchedUserRating}
+                  <span>⭐️</span>{" "}
+                </p>
               )}
             </div>
             <p>

@@ -15,8 +15,3 @@ export function useLocalStorageState(initialState, key) {
 
   return [value, setValue];
 }
-//   const [watched, setWatched] = useState([]);
-  // const [query, setQuery] = useState("Inception");
-  // const [SlectedId, setSlectedId] = useState(null);
-
-  // const { movies, isLoading, error } = useMovies(query);
